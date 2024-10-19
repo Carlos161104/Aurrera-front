@@ -1,9 +1,9 @@
 import Headers from "./_components/Headre";
 import Sidebar from "./_components/_sidebar/Sidebar";
 
-const layoutDashboard = ({ children, count }: Readonly<{
+const layoutDashboard = ({ children, locations }: Readonly<{
     children: React.ReactNode;
-    count: React.ReactNode;
+    locations: React.ReactNode;
 }>) => {
     return (
         <div className=" bg-green-400">
@@ -11,7 +11,7 @@ const layoutDashboard = ({ children, count }: Readonly<{
             <div className="flex flex-row items-center">
                 <Sidebar />
                 {children}
-                {count}
+                {locations}
             </div>
 
         </div>

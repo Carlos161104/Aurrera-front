@@ -3,30 +3,41 @@ import { API_URL } from "@/constants";
 import { Button, Input } from "@nextui-org/react";
 import axios from "axios";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const LoginPage = () => {
+  const [submit, setSubmit] = useState(false);
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
+    setSubmit(true);
     e.preventDefault();
     const formData = new FormData(e.target);
     let authData: any = {};
     authData.userEmail = formData.get("userEmail");
     authData.userPassword = formData.get("userPassword");
     try {
-      const { data } = await axios.post(`${API_URL}/auth/login`, {...authData}, {
-        withCredentials: true,
-      });
-      console.log(data);
+      const response = await axios.post(
+        `${API_URL}/auth/login`,
+        { ...authData },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response.status);
+      if (response.status >= 200 && response.status < 300) {
+        router.push("/dashboard");
+      }
+      setSubmit(false);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
+      setSubmit(false);
     }
   };
-  
+
   return (
-    <form
-      className="bg-green-700 px-5 py-2 rounded-md"
-      onSubmit={handleSubmit}
-    >
+    <form className="bg-green-700 px-5 py-2 rounded-md" onSubmit={handleSubmit}>
       <p className="text-2xl my-4">Registrarse en la plataforma</p>
       <div className="flex flex-col gap-2 my-10 items-center">
         <Input
@@ -45,8 +56,8 @@ const LoginPage = () => {
         />
       </div>
       <div className="flex flex-col items-center gap-2">
-        <Button color="primary" type="submit">
-          Iniciar sesión
+        <Button color="primary" type="submit" disabled={submit}>
+          {submit ? "Enviando..." : "Iniciar sesión"}
         </Button>
         <p>
           No tienes cuenta?
