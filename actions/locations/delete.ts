@@ -1,20 +1,21 @@
-'use server';
+"use server";
 
-import { API_URL, TOKEN_NAME } from "@/constants";
-import axios from "axios";
-import { cookies } from "next/headers";
+import { API_URL } from "@/constants";
+import { AuthHeaders } from "@/helpers/authHeaders";
+import { revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 
-export const deleteLocation =(formData: FormData) => {
-  const token = cookies().get(TOKEN_NAME)?.value
-
-  const locationID = formData.get('deleteValue')
+export const deleteLocation = (formData: FormData) => {
+  const locationID = formData.get("deleteValue");
   if (!locationID) return;
 
-  axios.delete(`${API_URL}/location/${locationID}`, {
+  fetch(`${API_URL}/location/${locationID}`, {
+    method: "DELETE",
     headers: {
-      Authorization: `Bearer ${token}`,
-    }
-  })
-  return;
-}
+      ...AuthHeaders(),
+    },
+  });
 
+  revalidateTag("dashboard:locations");
+  redirect("/dashboard");
+};

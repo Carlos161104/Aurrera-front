@@ -2,8 +2,6 @@ import { API_URL, TOKEN_NAME } from "@/constants";
 import { Location } from "@/entities";
 import { AuthHeaders } from "@/helpers/authHeaders";
 import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
-import axios from "axios";
-import { cookies } from "next/headers";
 import Link from "next/link";
 
 const LocationCard = async ({
@@ -13,11 +11,15 @@ const LocationCard = async ({
 }) => {
   if (!store) return null;
   const authHeaders = await AuthHeaders();
-  const { data } = await axios.get<Location>(`${API_URL}/locations/${store}`, {
+  const response = await fetch(`${API_URL}/locations/${store}`, {
     headers: {
-      ...authHeaders
+      ...authHeaders,
+    },
+    next: {
+      tags: ["dashboard:locations", `dashboard:locations:${store}`],
     },
   });
+  const data: Location = await response.json();
   return (
     <Card className="w-full">
       <CardHeader>
@@ -36,9 +38,9 @@ const LocationCard = async ({
             </Link>
           </b>
         </p>
-         {
+        {
           //Aqui se deve de poner el mapa cuando se tenga la ubicacion de la tienda
-         }
+        }
       </CardBody>
     </Card>
   );

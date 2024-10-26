@@ -1,7 +1,6 @@
 "use client";
 import { API_URL } from "@/constants";
 import { Button, Input } from "@nextui-org/react";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -13,18 +12,16 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     setSubmit(true);
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.target as HTMLFormElement);
     let authData: any = {};
     authData.userEmail = formData.get("userEmail");
     authData.userPassword = formData.get("userPassword");
     try {
-      const response = await axios.post(
-        `${API_URL}/auth/login`,
-        { ...authData },
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        body: JSON.stringify(authData),
+        credentials: "include",
+      });
       console.log(response.status);
       if (response.status >= 200 && response.status < 300) {
         router.push("/dashboard");

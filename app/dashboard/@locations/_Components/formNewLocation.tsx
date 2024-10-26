@@ -1,25 +1,36 @@
 import { createdLocation } from "@/actions/locations/create";
 import { API_URL, TOKEN_NAME } from "@/constants";
 import { Button, Input } from "@nextui-org/react";
-import axios from "axios";
-import { cookies } from "next/headers";
 import SelectManager from "./SelectManager";
+import { AuthHeaders } from "@/helpers/authHeaders";
+import { Location, Manager } from "@/entities";
 
-const FormNewLocation = async ({ store }: {store: string |string[] | undefined}) => {
+const FormNewLocation = async ({
+  store,
+}: {
+  store: string | string[] | undefined;
+}) => {
   if (store) return null;
 
-  const token = cookies().get(TOKEN_NAME)?.value;
-  const responseManagers = await axios.get(`${API_URL}/managers`, {
+  const response = await fetch(`${API_URL}/managers`, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      ...AuthHeaders(),
+    },
+    next: {
+      tags: ["dashboard:managers"],
     },
   });
 
-  const responseLocations = await axios.get(`${API_URL}/locations`, {
+  const responseManagers: Manager[] = await response.json();
+  const responseLoc = await fetch(`${API_URL}/locations`, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      ...AuthHeaders(),
+    },
+    next: {
+      tags: ["dashboard:locations", "dashboard:locations:managers"],
     },
   });
+  const dataLocations: Location[] = await responseLoc.json();
   return (
     <form
       action={createdLocation}
@@ -34,10 +45,7 @@ const FormNewLocation = async ({ store }: {store: string |string[] | undefined})
       />
       <Input label="Latitud" placeholder="134" name="locationLat" />
       <Input label="Longitud" placeholder="-120" name="locationLng" />
-      <SelectManager
-        managers={responseManagers.data}
-        locations={responseLocations.data}
-      />
+      <SelectManager managers={responseManagers} locations={dataLocations} />
 
       <Button className="w-full" color="primary" type="submit">
         Subir

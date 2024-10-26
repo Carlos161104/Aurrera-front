@@ -6,7 +6,7 @@ import { AuthHeaders } from "@/helpers/authHeaders";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
-export const createdLocation = async (formData: FormData): Promise<void> => {
+export const updateLocation = async (store: string, formData: FormData): Promise<void> => {
   let location: any = {};
   let locationLatLng: any = [0, 0];
 
@@ -25,8 +25,8 @@ export const createdLocation = async (formData: FormData): Promise<void> => {
 
   location.locationLatLng = locationLatLng;
 
-  const response = await fetch(`${API_URL}/locations`, {
-    method: "POST",
+  const response = await fetch(`${API_URL}/locations/${store}`, {
+    method: "PATCH",
     body: JSON.stringify(location),
     headers: {
       "content-type": "application/json",
@@ -35,8 +35,9 @@ export const createdLocation = async (formData: FormData): Promise<void> => {
   });
 
   const data: Location = await response.json();
-  if (response.status === 201) {
+  if (response.status === 200) {
     revalidateTag("dashboard:locations");
+    revalidateTag(`dashboard:locations:${store}`);
     redirect(`/dashboard?store:${data.locationID}`);
   }
 
