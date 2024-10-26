@@ -1,5 +1,6 @@
 import { API_URL, TOKEN_NAME } from "@/constants";
 import { Location } from "@/entities";
+import { AuthHeaders } from "@/helpers/authHeaders";
 import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import axios from "axios";
 import { cookies } from "next/headers";
@@ -11,10 +12,10 @@ const LocationCard = async ({
   store: string | string[] | undefined;
 }) => {
   if (!store) return null;
-  const token = cookies().get(TOKEN_NAME)?.value;
+  const authHeaders = await AuthHeaders();
   const { data } = await axios.get<Location>(`${API_URL}/locations/${store}`, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      ...authHeaders
     },
   });
   return (
@@ -26,7 +27,7 @@ const LocationCard = async ({
         </p>
       </CardHeader>
       <Divider />
-      <CardBody>
+      <CardBody className="flex flex-col w-full items-center">
         <p className="w-full">
           Manager:{" "}
           <b>
@@ -35,6 +36,9 @@ const LocationCard = async ({
             </Link>
           </b>
         </p>
+         {
+          //Aqui se deve de poner el mapa cuando se tenga la ubicacion de la tienda
+         }
       </CardBody>
     </Card>
   );

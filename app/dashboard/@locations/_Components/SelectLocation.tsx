@@ -10,7 +10,6 @@ const SelectLocation = ({
   locations: Location[];
   store: string | string[] | undefined;
 }) => {
-  
   const router = useRouter();
 
   return (
@@ -21,7 +20,8 @@ const SelectLocation = ({
         mainWrapper: "hover:ring-2 ring-red-500 rounded-xl transition-all",
       }}
       onChange={(e) => {
-        if (e.target.value === "0" || e.target.value === "") router.push(`/dashboard`);
+        if (e.target.value === "0" || e.target.value === "")
+          router.push(`/dashboard`);
         else router.push(`/dashboard?store=${e.target.value}`);
       }}
       selectedKeys={store ? store : "0"}
