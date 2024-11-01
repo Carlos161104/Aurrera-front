@@ -38,7 +38,7 @@ const CountManagersPage = async () => {
         sin tienda
       </h1>
       <h1>El salario maximo es de ${max} </h1>
-      <h1>El salario promedio es de ${salary/data.length}</h1>
+      <h1>El salario promedio es de ${(salary/data.length).toFixed(2)}</h1>
     </Card>
   );
 };

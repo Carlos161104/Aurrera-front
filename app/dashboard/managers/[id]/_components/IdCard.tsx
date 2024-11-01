@@ -19,6 +19,9 @@ const IdCard = ({ manager }: { manager: Manager }) => {
           <p className="w-full">
             Telefono: <b>{manager.managerPhone}</b>
           </p>
+          <p className="w-full">
+            Salario: <b>{manager.salary}</b>
+          </p>
         </div>
 
         {manager.location ? (
